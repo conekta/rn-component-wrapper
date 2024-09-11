@@ -1,70 +1,48 @@
-import { Image, StyleSheet, Platform } from 'react-native';
-
-import { HelloWave } from '@/components/HelloWave';
-import ParallaxScrollView from '@/components/ParallaxScrollView';
-import { ThemedText } from '@/components/ThemedText';
-import { ThemedView } from '@/components/ThemedView';
+import Constants from 'expo-constants';
+import { StyleSheet, View } from 'react-native';
+import ComponentMobileWrapper from '@/components/componentMobileWrapper/componentMobileWrapper';
+import { IframeCallbacks } from '@/components/componentMobileWrapper/dtos';
 
 export default function HomeScreen() {
+  const config = {
+    locale: 'es',
+    checkoutRequestId: '88c4b69c-fb1e-45bd-9f64-f6dd5126afc0',
+    publicKey: 'key_atwTof9KH76n5GyJPmbsVgQ',
+    targetIFrame: '#example',
+  };
+  const options = {
+    backgroundMode: 'darkMode',
+    colorPrimary: '#2C4CF5',
+    colorLabel: '#B4B5D3',
+    colorText: '#B4B5D3',
+    inputType: 'flatMode',
+    hideLogo: false,
+  };
+
+  const callbacks: IframeCallbacks = {
+    onGetInfoSuccess: (performanceMeasure)=>{
+      console.log("Loading time:", performanceMeasure.initLoadTime);
+    },
+    onErrorPayment: (error)=>{
+      console.log("Error in payment component:", error);
+    },
+    onFinalizePayment:(order)=>{
+      console.log("The payment has been success, order data:", order)
+    }
+  }
   return (
-    <ParallaxScrollView
-      headerBackgroundColor={{ light: '#A1CEDC', dark: '#1D3D47' }}
-      headerImage={
-        <Image
-          source={require('@/assets/images/partial-react-logo.png')}
-          style={styles.reactLogo}
-        />
-      }>
-      <ThemedView style={styles.titleContainer}>
-        <ThemedText type="title">Welcome!</ThemedText>
-        <HelloWave />
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 1: Try it</ThemedText>
-        <ThemedText>
-          Edit <ThemedText type="defaultSemiBold">app/(tabs)/index.tsx</ThemedText> to see changes.
-          Press{' '}
-          <ThemedText type="defaultSemiBold">
-            {Platform.select({ ios: 'cmd + d', android: 'cmd + m' })}
-          </ThemedText>{' '}
-          to open developer tools.
-        </ThemedText>
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 2: Explore</ThemedText>
-        <ThemedText>
-          Tap the Explore tab to learn more about what's included in this starter app.
-        </ThemedText>
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 3: Get a fresh start</ThemedText>
-        <ThemedText>
-          When you're ready, run{' '}
-          <ThemedText type="defaultSemiBold">npm run reset-project</ThemedText> to get a fresh{' '}
-          <ThemedText type="defaultSemiBold">app</ThemedText> directory. This will move the current{' '}
-          <ThemedText type="defaultSemiBold">app</ThemedText> to{' '}
-          <ThemedText type="defaultSemiBold">app-example</ThemedText>.
-        </ThemedText>
-      </ThemedView>
-    </ParallaxScrollView>
+    <View style={styles.container}>
+    <ComponentMobileWrapper config={config} options={options} callbacks={callbacks} />
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
-  titleContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
+  container: {
+    flex: 1,
+    marginTop: Constants.statusBarHeight,
   },
-  stepContainer: {
-    gap: 8,
-    marginBottom: 8,
-  },
-  reactLogo: {
-    height: 178,
-    width: 290,
-    bottom: 0,
-    left: 0,
-    position: 'absolute',
-  },
+  webv:{
+    flex: 1
+  }
 });
